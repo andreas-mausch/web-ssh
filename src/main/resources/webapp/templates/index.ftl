@@ -10,8 +10,9 @@
 
     <div>
         <textarea v-model="consoleOutput"
-                  @keydown.prevent
-                  @keyup.prevent="keyPressed"
+                  @keydown="preventShortcuts"
+                  @keypress.prevent="keyPressed"
+                  @keyup.prevent="keyUp"
                   class="consoleOutput"></textarea>
     </div>
 </div>

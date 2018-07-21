@@ -35,14 +35,20 @@ var vm = new Vue({
             };
         },
         keyPressed: function (event) {
+            this.send(event.which);
+        },
+        keyUp: function (event) {
             if (event.ctrlKey && !event.altKey && !event.shiftKey) {
                 if (event.key === "c") {
                     this.ctrlC();
                 } else if (event.key === "d") {
                     this.ctrlD();
                 }
-            } else {
-                this.send(event.keyCode);
+            }
+        },
+        preventShortcuts: function (event) {
+            if (event.ctrlKey && !event.altKey && !event.shiftKey) {
+                event.preventDefault();
             }
         },
         ctrlC: function () {
