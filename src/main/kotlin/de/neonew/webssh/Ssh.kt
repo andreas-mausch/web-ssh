@@ -1,3 +1,5 @@
+package de.neonew.webssh
+
 import net.schmizz.sshj.SSHClient
 import net.schmizz.sshj.connection.channel.direct.Session
 import net.schmizz.sshj.transport.verification.ConsoleKnownHostsVerifier

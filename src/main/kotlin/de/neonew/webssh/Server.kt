@@ -1,3 +1,5 @@
+package de.neonew.webssh
+
 import freemarker.cache.ClassTemplateLoader
 import io.ktor.application.Application
 import io.ktor.application.call
