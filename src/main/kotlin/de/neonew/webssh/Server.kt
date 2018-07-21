@@ -21,6 +21,7 @@ import io.ktor.websocket.webSocket
 import net.schmizz.sshj.common.SSHException
 import org.slf4j.LoggerFactory.getLogger
 import org.slf4j.event.Level.INFO
+import kotlin.concurrent.thread
 
 fun main(args: Array<String>) {
     embeddedServer(Netty, port = 8080, module = Application::main).start(wait = true)
@@ -53,12 +54,16 @@ fun Application.main() {
             logger.info("New client connected, connectionString: {}", connectionString)
             try {
                 Ssh(connectionString, incoming, outgoing).use { ssh ->
+                    thread {
+                        while (true) {
+                            ssh.readCommand()
+                            Thread.sleep(20)
+                        }
+                    }
                     while (true) {
-                        ssh.readCommand()
                         ssh.processOutput()
-
                         flush()
-                        Thread.sleep(200)
+                        Thread.sleep(20)
                     }
                 }
             } catch (e: SSHException) {
