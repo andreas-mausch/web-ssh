@@ -54,10 +54,12 @@ fun Application.main() {
             val connectionString = SshConnectionString(call.parameters["connectionString"]!!)
             logger.info("New client connected, connectionString: {}", connectionString)
             try {
+                // TODO: handle ClosedSendChannelException gracefully
                 Ssh(connectionString).use { ssh ->
                     launch {
                         ssh.readCommand(incoming)
                     }
+                    // TODO: does it leak?
                     while (true) {
                         ssh.processOutput(outgoing)
                         flush()

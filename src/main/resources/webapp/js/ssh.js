@@ -10,6 +10,7 @@ var vm = new Vue({
             this.consoleOutput = '';
 
             this.socket = new WebSocket(this.connectionString);
+            // TODO: error handling ERR_CONNECTION_REFUSED
             this.socket.onopen = function (event) {
             };
             this.socket.onclose = function (event) {
