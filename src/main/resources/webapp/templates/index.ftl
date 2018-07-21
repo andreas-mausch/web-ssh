@@ -5,7 +5,10 @@
 </head>
 
 <div id="app">
-    <p>{{ message }}</p>
+    <input v-model="connectionString">
+    <button v-on:click="connect">Connect</button>
+
+    <textarea v-model="consoleOutput"></textarea>
 </div>
 
 <script src="https://unpkg.com/vue@2.5.16"></script>
