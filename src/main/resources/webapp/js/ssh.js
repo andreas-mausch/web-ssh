@@ -50,6 +50,9 @@ var vm = new Vue({
             }
         },
         handleSpecialKey: function (event) {
+            if (!this.connected()) {
+                return null;
+            }
             if (event.ctrlKey && !event.altKey && !event.shiftKey) {
                 var a = 'A'.charCodeAt(0);
                 var z = 'Z'.charCodeAt(0);
@@ -67,11 +70,14 @@ var vm = new Vue({
         onPaste: function (event) {
             this.sendString(event.clipboardData.getData('Text'));
         },
+        connected: function () {
+            return this.socket != null;
+        },
         send: function (keyCode) {
             this.sendString(String.fromCharCode(keyCode));
         },
         sendString: function (string) {
-            if (this.socket != null) {
+            if (this.connected()) {
                 this.socket.send(string);
             }
         }
