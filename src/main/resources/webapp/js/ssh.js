@@ -39,26 +39,30 @@ var vm = new Vue({
             this.send(event.which);
         },
         keyUp: function (event) {
+            var specialKey = this.handleSpecialKey(event);
+            if (specialKey !== null) {
+                this.send(specialKey);
+            }
+        },
+        preventShortcuts: function (event) {
+            if (this.handleSpecialKey(event) !== null) {
+                event.preventDefault();
+            }
+        },
+        handleSpecialKey: function (event) {
             if (event.ctrlKey && !event.altKey && !event.shiftKey) {
                 var a = 'A'.charCodeAt(0);
                 var z = 'Z'.charCodeAt(0);
 
                 if (event.keyCode >= a
                     && event.keyCode <= z) {
-                    this.send(1 + (event.keyCode - a));
+                    return 1 + (event.keyCode - a);
                 }
             }
             if (event.which === 8) {
-                this.send(event.which);
+                return event.which;
             }
-        },
-        preventShortcuts: function (event) {
-            if (event.ctrlKey && !event.altKey && !event.shiftKey) {
-                event.preventDefault();
-            }
-            if (event.which === 8) {
-                event.preventDefault();
-            }
+            return null;
         },
         send: function (keyCode) {
             if (this.socket != null) {
