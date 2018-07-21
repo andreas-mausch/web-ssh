@@ -7,16 +7,15 @@ var vm = new Vue({
     },
     mounted: function () {
         Terminal.applyAddon(fit);
+        Terminal.applyAddon(attach);
         this.term = new Terminal();
         this.term.open(document.getElementById('terminal'));
         this.term.fit();
-        this.term.on('data', function (data) {
-            vm.send(data);
-        });
     },
     methods: {
         connect: function () {
             this.socket = new WebSocket(this.connectionString);
+            this.term.attach(this.socket);
             // TODO: error handling ERR_CONNECTION_REFUSED
             this.socket.onopen = function (event) {
                 vm.term.clear();
@@ -24,19 +23,6 @@ var vm = new Vue({
             this.socket.onclose = function (event) {
                 vm.socket = null;
             };
-            this.socket.onmessage = function (event) {
-                vm.term.write(event.data);
-            };
-            this.socket.onerror = function (event) {
-            };
-        },
-        connected: function () {
-            return this.socket != null;
-        },
-        send: function (string) {
-            if (this.connected()) {
-                this.socket.send(string);
-            }
         }
     }
 });

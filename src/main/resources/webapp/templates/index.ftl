@@ -18,5 +18,6 @@
 <script src="https://unpkg.com/vue@2.5.16"></script>
 <script src="https://unpkg.com/xterm@3.5.1/dist/xterm.js"></script>
 <script src="https://unpkg.com/xterm@3.5.1/dist/addons/fit/fit.js"></script>
+<script src="https://unpkg.com/xterm@3.5.1/dist/addons/attach/attach.js"></script>
 <script src="static/ssh.js"></script>
 </html>
