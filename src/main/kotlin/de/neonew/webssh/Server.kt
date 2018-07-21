@@ -47,6 +47,7 @@ fun Application.main() {
 
         static("static") {
             resources("webapp/css")
+            resources("webapp/js")
         }
 
         webSocket("/ssh/{connectionString}") {
