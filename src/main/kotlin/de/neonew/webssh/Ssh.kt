@@ -83,12 +83,12 @@ class SshConnectionString(connectionString: String) {
     val username: String?
     val port: Int = 22
 
-    private val regex = Regex("^([A-Za-z][A-Za-z0-9_]*)(@([A-Za-z][A-Za-z0-9_.]*))?\$")
+    private val regex = Regex("""^(([A-Za-z][A-Za-z0-9_]*)@)?([A-Za-z][A-Za-z0-9_.]*)$""")
 
     init {
         val matchResult = regex.find(connectionString)!!
-        hostname = matchResult.groups[1]!!.value
-        username = matchResult.groups[3]?.value
+        username = matchResult.groups[2]?.value
+        hostname = matchResult.groups[3]!!.value
     }
 
     override fun toString(): String {

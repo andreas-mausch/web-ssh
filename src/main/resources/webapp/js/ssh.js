@@ -6,8 +6,10 @@ var vm = new Vue({
         term: null
     },
     mounted: function () {
+        Terminal.applyAddon(fit);
         this.term = new Terminal();
         this.term.open(document.getElementById('terminal'));
+        this.term.fit();
         this.term.on('data', function (data) {
             vm.send(data);
         });
@@ -21,7 +23,6 @@ var vm = new Vue({
             };
             this.socket.onclose = function (event) {
                 vm.socket = null;
-                vm.term.kill();
             };
             this.socket.onmessage = function (event) {
                 vm.term.write(event.data);
