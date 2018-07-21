@@ -48,9 +48,15 @@ var vm = new Vue({
                     this.send(1 + (event.keyCode - a));
                 }
             }
+            if (event.which === 8) {
+                this.send(event.which);
+            }
         },
         preventShortcuts: function (event) {
             if (event.ctrlKey && !event.altKey && !event.shiftKey) {
+                event.preventDefault();
+            }
+            if (event.which === 8) {
                 event.preventDefault();
             }
         },
