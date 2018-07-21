@@ -1,11 +1,14 @@
+import freemarker.cache.ClassTemplateLoader
 import io.ktor.application.Application
 import io.ktor.application.call
 import io.ktor.application.install
 import io.ktor.features.CallLogging
+import io.ktor.freemarker.FreeMarker
+import io.ktor.freemarker.FreeMarkerContent
 import io.ktor.http.cio.websocket.Frame
 import io.ktor.http.cio.websocket.readText
 import io.ktor.locations.Locations
-import io.ktor.response.respondText
+import io.ktor.response.respond
 import io.ktor.routing.get
 import io.ktor.routing.routing
 import io.ktor.server.engine.embeddedServer
@@ -28,11 +31,14 @@ fun Application.main() {
         level = INFO
     }
     install(Locations)
+    install(FreeMarker) {
+        templateLoader = ClassTemplateLoader(Application::class.java.classLoader, "webapp/templates")
+    }
     install(WebSockets)
 
     routing {
         get("/") {
-            call.respondText("Hello World!")
+            call.respond(FreeMarkerContent("index.ftl", null))
         }
 
         webSocket("/ssh/{connectionString}") {
