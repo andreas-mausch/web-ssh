@@ -13,6 +13,7 @@
                   @keydown="preventShortcuts"
                   @keypress.prevent="keyPressed"
                   @keyup.prevent="keyUp"
+                  @paste.prevent="onPaste"
                   class="consoleOutput"></textarea>
     </div>
 </div>

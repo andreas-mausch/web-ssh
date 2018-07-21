@@ -64,6 +64,9 @@ var vm = new Vue({
             }
             return null;
         },
+        onPaste: function (event) {
+            this.sendString(event.clipboardData.getData('Text'));
+        },
         send: function (keyCode) {
             this.sendString(String.fromCharCode(keyCode));
         },
