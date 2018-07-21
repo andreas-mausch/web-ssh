@@ -40,8 +40,8 @@ class Ssh(connectionString: SshConnectionString) : Closeable {
     suspend fun readCommand(incoming: ReceiveChannel<Frame>) {
         incoming.mapNotNull { it as? Frame.Text }.consumeEach { frame ->
             val text = frame.readText()
+            text.forEach { char -> shell.outputStream.write(char.toInt()) }
 
-            shell.outputStream.write(text.toInt())
             shell.outputStream.flush()
         }
     }

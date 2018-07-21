@@ -56,7 +56,7 @@ var vm = new Vue({
         },
         send: function (keyCode) {
             if (this.socket != null) {
-                this.socket.send(keyCode)
+                this.socket.send(String.fromCharCode(keyCode))
             }
         }
     }
