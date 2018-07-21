@@ -39,10 +39,12 @@ var vm = new Vue({
         },
         keyUp: function (event) {
             if (event.ctrlKey && !event.altKey && !event.shiftKey) {
-                if (event.key === "c") {
-                    this.ctrlC();
-                } else if (event.key === "d") {
-                    this.ctrlD();
+                var a = 'A'.charCodeAt(0);
+                var z = 'Z'.charCodeAt(0);
+
+                if (event.keyCode >= a
+                    && event.keyCode <= z) {
+                    this.send(1 + (event.keyCode - a));
                 }
             }
         },
@@ -50,12 +52,6 @@ var vm = new Vue({
             if (event.ctrlKey && !event.altKey && !event.shiftKey) {
                 event.preventDefault();
             }
-        },
-        ctrlC: function () {
-            this.send(3);
-        },
-        ctrlD: function () {
-            this.send(4);
         },
         send: function (keyCode) {
             if (this.socket != null) {
