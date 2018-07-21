@@ -2,9 +2,7 @@ import io.ktor.application.Application
 import io.ktor.application.call
 import io.ktor.application.install
 import io.ktor.features.CallLogging
-import io.ktor.http.cio.websocket.CloseReason
 import io.ktor.http.cio.websocket.Frame
-import io.ktor.http.cio.websocket.close
 import io.ktor.http.cio.websocket.readText
 import io.ktor.locations.Locations
 import io.ktor.response.respondText
@@ -14,7 +12,8 @@ import io.ktor.server.engine.embeddedServer
 import io.ktor.server.netty.Netty
 import io.ktor.websocket.WebSockets
 import io.ktor.websocket.webSocket
-import kotlinx.coroutines.experimental.channels.ReceiveChannel
+import kotlinx.coroutines.experimental.channels.consumeEach
+import net.schmizz.sshj.common.SSHException
 import org.slf4j.LoggerFactory.getLogger
 import org.slf4j.event.Level.INFO
 
@@ -37,30 +36,20 @@ fun Application.main() {
         }
 
         webSocket("/ssh/{connectionString}") {
-            logger.info("New client connected")
-            val connectionString = call.parameters["connectionString"]!!
-            logger.info("hostname: {}", connectionString)
-            Ssh(SshConnectionString(connectionString))
-
-            while (true) {
-                val text = readTextFrame(incoming)
-                outgoing.send(Frame.Text("YOU SAID: $text"))
-                if (text.equals("bye", ignoreCase = true)) {
-                    close(CloseReason(CloseReason.Codes.NORMAL, "Client said BYE"))
+            val connectionString = SshConnectionString(call.parameters["connectionString"]!!)
+            logger.info("New client connected, connectionString: {}", connectionString)
+            try {
+                Ssh(connectionString).use { ssh ->
+                    incoming.consumeEach { frame ->
+                        if (frame is Frame.Text) {
+                            val text = frame.readText()
+                            outgoing.send(Frame.Text("YOU SAID: $text"))
+                        }
+                    }
                 }
+            } catch (e: SSHException) {
+                outgoing.send(Frame.Text("Exception occured: $e"))
             }
-        }
-    }
-}
-
-suspend fun readTextFrame(incoming: ReceiveChannel<Frame>): String {
-    val frame = incoming.receive()
-    when (frame) {
-        is Frame.Text -> {
-            return frame.readText()
-        }
-        else -> {
-            throw IllegalStateException()
         }
     }
 }
