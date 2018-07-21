@@ -18,10 +18,11 @@ import io.ktor.server.engine.embeddedServer
 import io.ktor.server.netty.Netty
 import io.ktor.websocket.WebSockets
 import io.ktor.websocket.webSocket
+import kotlinx.coroutines.experimental.delay
+import kotlinx.coroutines.experimental.launch
 import net.schmizz.sshj.common.SSHException
 import org.slf4j.LoggerFactory.getLogger
 import org.slf4j.event.Level.INFO
-import kotlin.concurrent.thread
 
 fun main(args: Array<String>) {
     embeddedServer(Netty, port = 8080, module = Application::main).start(wait = true)
@@ -53,17 +54,14 @@ fun Application.main() {
             val connectionString = SshConnectionString(call.parameters["connectionString"]!!)
             logger.info("New client connected, connectionString: {}", connectionString)
             try {
-                Ssh(connectionString, incoming, outgoing).use { ssh ->
-                    thread {
-                        while (true) {
-                            ssh.readCommand()
-                            Thread.sleep(20)
-                        }
+                Ssh(connectionString).use { ssh ->
+                    launch {
+                        ssh.readCommand(incoming)
                     }
                     while (true) {
-                        ssh.processOutput()
+                        ssh.processOutput(outgoing)
                         flush()
-                        Thread.sleep(20)
+                        delay(20)
                     }
                 }
             } catch (e: SSHException) {

@@ -4,6 +4,8 @@ import io.ktor.http.cio.websocket.Frame
 import io.ktor.http.cio.websocket.readText
 import kotlinx.coroutines.experimental.channels.ReceiveChannel
 import kotlinx.coroutines.experimental.channels.SendChannel
+import kotlinx.coroutines.experimental.channels.consumeEach
+import kotlinx.coroutines.experimental.channels.mapNotNull
 import net.schmizz.sshj.SSHClient
 import net.schmizz.sshj.connection.channel.direct.Session
 import net.schmizz.sshj.transport.verification.ConsoleKnownHostsVerifier
@@ -14,7 +16,7 @@ import java.io.IOException
 import java.io.InputStream
 
 
-class Ssh(connectionString: SshConnectionString, val incoming: ReceiveChannel<Frame>, val outgoing: SendChannel<Frame>) : Closeable {
+class Ssh(connectionString: SshConnectionString) : Closeable {
 
     private val sshClient: SSHClient = SSHClient()
     private val session: Session
@@ -35,19 +37,16 @@ class Ssh(connectionString: SshConnectionString, val incoming: ReceiveChannel<Fr
         sshClient.disconnect()
     }
 
-    fun readCommand() {
-        val frame = incoming.poll()
-        frame.let {
-            if (frame is Frame.Text) {
-                val text = frame.readText()
+    suspend fun readCommand(incoming: ReceiveChannel<Frame>) {
+        incoming.mapNotNull { it as? Frame.Text }.consumeEach { frame ->
+            val text = frame.readText()
 
-                shell.outputStream.write(text.toInt())
-                shell.outputStream.flush()
-            }
+            shell.outputStream.write(text.toInt())
+            shell.outputStream.flush()
         }
     }
 
-    suspend fun processOutput() {
+    suspend fun processOutput(outgoing: SendChannel<Frame>) {
         val data = ByteArray(1024)
         val bytesRead = readInputStreamWithTimeout(shell.inputStream, data, 2000)
         if (bytesRead > 0) {
