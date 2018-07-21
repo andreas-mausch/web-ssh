@@ -10,7 +10,6 @@ import io.ktor.features.CallLogging
 import io.ktor.freemarker.FreeMarker
 import io.ktor.freemarker.FreeMarkerContent
 import io.ktor.http.cio.websocket.Frame
-import io.ktor.http.cio.websocket.readText
 import io.ktor.locations.Locations
 import io.ktor.response.respond
 import io.ktor.routing.get
@@ -19,7 +18,6 @@ import io.ktor.server.engine.embeddedServer
 import io.ktor.server.netty.Netty
 import io.ktor.websocket.WebSockets
 import io.ktor.websocket.webSocket
-import kotlinx.coroutines.experimental.channels.consumeEach
 import net.schmizz.sshj.common.SSHException
 import org.slf4j.LoggerFactory.getLogger
 import org.slf4j.event.Level.INFO
@@ -54,12 +52,13 @@ fun Application.main() {
             val connectionString = SshConnectionString(call.parameters["connectionString"]!!)
             logger.info("New client connected, connectionString: {}", connectionString)
             try {
-                Ssh(connectionString).use { ssh ->
-                    incoming.consumeEach { frame ->
-                        if (frame is Frame.Text) {
-                            val text = frame.readText()
-                            outgoing.send(Frame.Text("YOU SAID: $text"))
-                        }
+                Ssh(connectionString, incoming, outgoing).use { ssh ->
+                    while (true) {
+                        ssh.readCommand()
+                        ssh.processOutput()
+
+                        flush()
+                        Thread.sleep(200)
                     }
                 }
             } catch (e: SSHException) {

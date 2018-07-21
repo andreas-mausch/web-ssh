@@ -8,7 +8,12 @@
     <input v-model="connectionString">
     <button v-on:click="connect">Connect</button>
 
-    <textarea v-model="consoleOutput"></textarea>
+    <div>
+        <textarea v-model="consoleOutput"
+                  @keydown.prevent
+                  @keyup.prevent="keyPressed"
+                  class="consoleOutput"></textarea>
+    </div>
 </div>
 
 <script src="https://unpkg.com/vue@2.5.16"></script>
