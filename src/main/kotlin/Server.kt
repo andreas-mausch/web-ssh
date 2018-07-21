@@ -2,6 +2,8 @@ import freemarker.cache.ClassTemplateLoader
 import io.ktor.application.Application
 import io.ktor.application.call
 import io.ktor.application.install
+import io.ktor.content.resources
+import io.ktor.content.static
 import io.ktor.features.CallLogging
 import io.ktor.freemarker.FreeMarker
 import io.ktor.freemarker.FreeMarkerContent
@@ -39,6 +41,10 @@ fun Application.main() {
     routing {
         get("/") {
             call.respond(FreeMarkerContent("index.ftl", null))
+        }
+
+        static("static") {
+            resources("webapp/css")
         }
 
         webSocket("/ssh/{connectionString}") {

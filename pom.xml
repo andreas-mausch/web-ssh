@@ -105,6 +105,34 @@
                     </args>
                 </configuration>
             </plugin>
+
+            <plugin>
+                <groupId>nl.geodienstencentrum.maven</groupId>
+                <artifactId>sass-maven-plugin</artifactId>
+                <version>2.25</version>
+                <configuration>
+                    <resources>
+                        <resource>
+                            <source>
+                                <directory>${project.basedir}/src/main/resources/webapp/scss</directory>
+                                <includes>
+                                    <include>**/*.scss</include>
+                                </includes>
+                            </source>
+                            <destination>${project.build.outputDirectory}/webapp/css</destination>
+                        </resource>
+                    </resources>
+                </configuration>
+                <executions>
+                    <execution>
+                        <id>generate-css-using-sass</id>
+                        <phase>generate-resources</phase>
+                        <goals>
+                            <goal>update-stylesheets</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
         </plugins>
     </build>
 </project>
