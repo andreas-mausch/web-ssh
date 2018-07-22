@@ -12,11 +12,15 @@
         <button v-on:click="connect">Connect</button>
 
         <div class="tabs">
-            <button
-                    v-for="session in sessions"
-                    v-on:click="currentSession = session">
-                {{ session.connectionString }}
-            </button>
+            <ul>
+                <li v-for="session in sessions"
+                    v-bind:class="{ active: currentSession == session }">
+                    <a href="#"
+                       v-on:click="currentSession = session">
+                        <span>{{ session.connectionString }}</span>
+                    </a>
+                </li>
+            </ul>
         </div>
     </div>
 

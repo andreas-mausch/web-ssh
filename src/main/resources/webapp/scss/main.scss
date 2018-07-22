@@ -18,9 +18,106 @@ body {
   flex-direction: column;
 }
 
+$border: rgba(0, 0, 0, 0.2);
+$background: #ffffff;
+$color: rgba(22, 195, 255, 0.5);
+
 .tabs {
   display: flex;
   flex-direction: row;
+}
+
+.tabs > ul {
+  text-align: center;
+  font-weight: 500;
+  margin: 20px 0 0;
+  padding: 0;
+  border-bottom: 1px solid $border;
+  z-index: 1;
+
+  > li {
+    display: inline-block;
+    padding: 10px 20px;
+    margin: 0 20px;
+    position: relative;
+    background-color: $background;
+
+    &:before,
+    &:after {
+      opacity: 0;
+      transition: 0.3s ease;
+    }
+
+    &.active:before, &.active:after,
+    &:hover:before, &:hover:after,
+    &:focus:before, &:focus:after {
+      opacity: 1;
+    }
+
+    // this is the shadow under the text/mask
+    &:before,
+    &.active:hover:before,
+    &.active:focus:before {
+      content: "";
+      position: absolute;
+      z-index: -1;
+      box-shadow: 0 2px 3px $color;
+      top: 50%;
+      bottom: 0;
+      left: 5px;
+      right: 5px;
+      border-radius: 100px / 10px;
+    }
+
+    // this is the "diamond" mask that creates the
+    // nice indent effect.
+    &:after,
+    &.active:hover:after,
+    &.active:focus:after {
+      content: "";
+      background: $background;
+      position: absolute;
+      width: 12px;
+      height: 12px;
+      left: 50%;
+      bottom: -6px;
+      margin-left: -6px;
+      transform: rotate(45deg);
+      box-shadow: inset 3px 3px 3px $color,
+      inset 1px 1px 1px opacify($border, 0.1);
+
+    }
+    &:hover:before,
+    &:focus:before {
+      box-shadow: 0 2px 3px $border;
+    }
+    &:hover:after,
+    &:focus:after {
+      box-shadow: inset 3px 3px 3px $border,
+      inset 1px 1px 1px opacify($border, 0.1);
+    }
+    &:focus a {
+      text-decoration: underline;
+    }
+
+    &:focus {
+      outline: none;
+    }
+
+    a {
+      color: #444;
+      text-decoration: none;
+
+      &:focus {
+        outline: none;
+      }
+      span {
+        position: relative;
+        top: -0.5em;
+      }
+
+    }
+  }
 }
 
 .ssh-session {
