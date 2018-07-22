@@ -10,6 +10,12 @@
     <div class="row">
         <input v-model="connectionString">
         <button v-on:click="connect">Connect</button>
+
+        <button
+                v-for="session in sessions"
+                v-on:click="currentSession = session">
+            {{ session.connectionString }}
+        </button>
     </div>
 
     <ssh-session
