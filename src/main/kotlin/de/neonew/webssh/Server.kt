@@ -62,6 +62,11 @@ fun Application.main() {
                     while (launch.isActive) {
                         ssh.processOutput(outgoing)
                         flush()
+
+                        if (!ssh.isActive()) {
+                            break
+                        }
+
                         delay(20)
                     }
                 }

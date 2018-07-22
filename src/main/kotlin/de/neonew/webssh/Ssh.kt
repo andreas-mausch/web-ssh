@@ -55,6 +55,8 @@ class Ssh(connectionString: SshConnectionString) : Closeable {
         }
     }
 
+    fun isActive(): Boolean = shell.isOpen
+
     @Throws(IOException::class)
     fun readInputStreamWithTimeout(inputStream: InputStream, buffer: ByteArray, timeoutMillis: Int): Int {
         var offset = 0
