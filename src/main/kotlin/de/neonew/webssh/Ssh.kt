@@ -25,7 +25,9 @@ class Ssh(connectionString: SshConnectionString) : Closeable {
     init {
         sshClient.addHostKeyVerifier(PromiscuousVerifier())
         sshClient.connect(connectionString.hostname, connectionString.port)
-        connectionString.username.let { sshClient.authPublickey(it) }
+
+        connectionString.options?.password?.let { sshClient.authPassword(connectionString.username, it) }
+                ?: connectionString.username.let { sshClient.authPublickey(it) }
 
         session = sshClient.startSession()
         session.allocateDefaultPTY()
@@ -87,7 +89,7 @@ class SshConnectionString(connectionString: String) {
     val port: Int = 22
     val options: Options?
 
-    data class Options(val command: String? = null)
+    data class Options(val command: String? = null, val password: String? = null)
 
     private val regex = Regex("""^(([A-Za-z][A-Za-z0-9_]*)@)?([A-Za-z][A-Za-z0-9_.]*)(\{.*})?$""")
 
