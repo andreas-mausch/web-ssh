@@ -6,7 +6,7 @@ import io.ktor.application.Application
 import io.ktor.application.call
 import io.ktor.application.install
 import io.ktor.auth.Authentication
-import io.ktor.auth.UserIdPrincipal
+import io.ktor.auth.UserHashedTableAuth
 import io.ktor.auth.authenticate
 import io.ktor.auth.basic
 import io.ktor.content.resources
@@ -21,6 +21,7 @@ import io.ktor.routing.get
 import io.ktor.routing.routing
 import io.ktor.server.engine.embeddedServer
 import io.ktor.server.netty.Netty
+import io.ktor.util.decodeBase64
 import io.ktor.websocket.WebSockets
 import io.ktor.websocket.webSocket
 import kotlinx.coroutines.experimental.delay
@@ -44,17 +45,12 @@ fun Application.main() {
         templateLoader = ClassTemplateLoader(Application::class.java.classLoader, "webapp/templates")
     }
     install(WebSockets)
+
+    val users = UserHashedTableAuth(table = mapOf(
+            "ssh" to decodeBase64("0relocFXy/kW5nBaQi3Thtf9OTTE8JWmzSvM7Swl8H0=")
+    ))
     install(Authentication) {
-        basic {
-            validate { credentials ->
-                if (credentials.name == "ssh"
-                        && credentials.password == "xBS-Vp9N-hey") {
-                    UserIdPrincipal(credentials.name)
-                } else {
-                    null
-                }
-            }
-        }
+        basic { validate({ users.authenticate(it) }) }
     }
 
     routing {
