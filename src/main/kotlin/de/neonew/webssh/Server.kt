@@ -1,5 +1,6 @@
 package de.neonew.webssh
 
+import com.beust.klaxon.KlaxonException
 import freemarker.cache.ClassTemplateLoader
 import io.ktor.application.Application
 import io.ktor.application.call
@@ -51,9 +52,9 @@ fun Application.main() {
         }
 
         webSocket("/ssh/{connectionString}") {
-            val connectionString = SshConnectionString(call.parameters["connectionString"]!!)
-            logger.info("New client connected, connectionString: {}", connectionString)
             try {
+                val connectionString = SshConnectionString(call.parameters["connectionString"]!!)
+                logger.info("New client connected, connectionString: {}", connectionString)
                 // TODO: handle ClosedSendChannelException gracefully
                 Ssh(connectionString).use { ssh ->
                     val launch = launch {
@@ -72,6 +73,8 @@ fun Application.main() {
                 }
             } catch (e: SSHException) {
                 outgoing.send(Frame.Text("Exception occured: $e"))
+            } catch (e: KlaxonException) {
+                outgoing.send(Frame.Text("Parameter parsing failed: $e"))
             }
         }
     }

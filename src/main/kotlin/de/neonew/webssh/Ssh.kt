@@ -1,5 +1,6 @@
 package de.neonew.webssh
 
+import com.beust.klaxon.Klaxon
 import io.ktor.http.cio.websocket.Frame
 import io.ktor.http.cio.websocket.readText
 import kotlinx.coroutines.experimental.channels.ReceiveChannel
@@ -33,7 +34,7 @@ class Ssh(connectionString: SshConnectionString) : Closeable {
         session = sshClient.startSession()
         session.allocateDefaultPTY()
 
-        channel = connectionString.command?.let { session.exec(it) } ?: session.startShell()
+        channel = connectionString.options?.command?.let { session.exec(it) } ?: session.startShell()
     }
 
     override fun close() {
@@ -88,15 +89,17 @@ class SshConnectionString(connectionString: String) {
     val hostname: String
     val username: String?
     val port: Int = 22
-    val command: String?
+    val options: Options?
 
-    private val regex = Regex("""^(([A-Za-z][A-Za-z0-9_]*)@)?([A-Za-z][A-Za-z0-9_.]*)$""")
+    data class Options(val command: String? = null)
+
+    private val regex = Regex("""^(([A-Za-z][A-Za-z0-9_]*)@)?([A-Za-z][A-Za-z0-9_.]*)(\{.*})?$""")
 
     init {
         val matchResult = regex.find(connectionString)!!
         username = matchResult.groups[2]?.value
         hostname = matchResult.groups[3]!!.value
-        command = null
+        options = matchResult.groups[4]?.let { Klaxon().parse<Options>(it.value) }
     }
 
     override fun toString(): String {

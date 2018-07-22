@@ -8,7 +8,11 @@ var vm = new Vue({
     mounted: function () {
         Terminal.applyAddon(fit);
         Terminal.applyAddon(attach);
-        this.term = new Terminal();
+        this.term = new Terminal({
+            theme: {
+                background: '#303030'
+            }
+        });
         this.term.open(document.getElementById('terminal'));
         this.term.fit();
     },
