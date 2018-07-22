@@ -7,7 +7,7 @@
     <title>Web-SSH</title>
 </head>
 
-<div id="app">
+<div id="app" v-cloak>
     <div>
         <div class="connection-bar">
             <input class="connection-string" v-model="connectionString">

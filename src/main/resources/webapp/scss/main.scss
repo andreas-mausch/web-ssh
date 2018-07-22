@@ -40,5 +40,9 @@ body {
   flex: 1;
 }
 
+[v-cloak] > * {
+  display: none;
+}
+
 @import 'tabs';
 @import 'wiggly-button';
