@@ -32,8 +32,9 @@ class Session {
             _this.socket = null;
         };
         _this.socket.onerror = function (event) {
-            // TODO: how?
-            // vm.term.write('Error while connecting to ' + vm.connectionString);
+            if (_this.onerror != null) {
+                _this.onerror('Error while connecting to ' + _this.connectionString);
+            }
         };
     }
 }
@@ -66,6 +67,10 @@ Vue.component('ssh-session', {
         this.term.open(this.$el.querySelector(".term"));
         this.term.fit();
 
+        const _this = this;
+        this.session.onerror = function (message) {
+            _this.term.write(message);
+        };
         this.term.attach(this.session.socket);
     }
 });
