@@ -56,11 +56,10 @@ fun Application.main() {
             try {
                 // TODO: handle ClosedSendChannelException gracefully
                 Ssh(connectionString).use { ssh ->
-                    launch {
+                    val launch = launch {
                         ssh.readCommand(incoming)
                     }
-                    // TODO: does it leak?
-                    while (true) {
+                    while (launch.isActive) {
                         ssh.processOutput(outgoing)
                         flush()
                         delay(20)

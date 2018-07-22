@@ -14,15 +14,26 @@ var vm = new Vue({
     },
     methods: {
         connect: function () {
-            this.socket = new WebSocket(this.connectionString);
-            this.term.attach(this.socket);
+            if (this.socket != null) {
+                this.socket.onclose = function (event) {
+                    vm.createSocket();
+                };
+                this.socket.close();
+            } else {
+                this.createSocket();
+            }
+        },
+        createSocket: function () {
+            var socket = new WebSocket(this.connectionString);
+            this.term.attach(socket);
             // TODO: error handling ERR_CONNECTION_REFUSED
-            this.socket.onopen = function (event) {
+            socket.onopen = function (event) {
                 vm.term.clear();
             };
-            this.socket.onclose = function (event) {
+            socket.onclose = function (event) {
                 vm.socket = null;
             };
+            this.socket = socket;
         }
     }
 });
