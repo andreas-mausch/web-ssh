@@ -18,6 +18,18 @@ body {
   flex-direction: column;
 }
 
+.connection-bar {
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+}
+
+.connection-string {
+  width: 600px;
+  text-align: center;
+  font-size: 1.2em;
+}
+
 .ssh-session {
   flex: 1;
   margin: 20px 20px 20px 20px;
@@ -29,3 +41,4 @@ body {
 }
 
 @import 'tabs';
+@import 'wiggly-button';

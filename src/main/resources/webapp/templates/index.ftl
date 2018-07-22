@@ -3,13 +3,16 @@
     <link rel="stylesheet" href="static/main.css"/>
     <link rel="stylesheet" href="https://unpkg.com/xterm@3.5.1/dist/xterm.css"/>
     <link rel="stylesheet" href="https://unpkg.com/@fortawesome/fontawesome-free@5.1.1/css/all.css"/>
+    <link href='https://fonts.googleapis.com/css?family=Montserrat:700' rel='stylesheet' type='text/css'>
     <title>Web-SSH</title>
 </head>
 
 <div id="app">
-    <div class="row">
-        <input v-model="connectionString">
-        <button v-on:click="connect">Connect</button>
+    <div>
+        <div class="connection-bar">
+            <input class="connection-string" v-model="connectionString">
+            <button class="wiggly-button" v-on:click="connect">Connect</button>
+        </div>
 
         <div class="tabs">
             <ul>
