@@ -93,6 +93,8 @@ const vm = new Vue({
         connectionString: 'ws://localhost:8080/ssh/nuc@nuc',
         favorites: {
             'nuc': 'ws://localhost:8080/ssh/nuc@nuc',
+            'nuc-ls': 'ws://localhost:8080/ssh/nuc@nuc{"command":"ls -lh"}',
+            'nuc-tail': 'ws://localhost:8080/ssh/nuc@nuc{"command":"tail -f nginx%2fnginx.conf"}',
             'pi': 'ws://localhost:8080/ssh/saam@pi'
         },
         sessions: [],
@@ -101,6 +103,12 @@ const vm = new Vue({
     methods: {
         connect: function () {
             let session = new Session(this.connectionString);
+            session.connect();
+            this.currentSession = session;
+            this.sessions.push(session)
+        },
+        connectToFavorite: function (favorite) {
+            let session = new Session(this.favorites[favorite]);
             session.connect();
             this.currentSession = session;
             this.sessions.push(session)
