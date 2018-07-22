@@ -2,6 +2,8 @@ A small web app which allows me to quickly access the servers in my private netw
 
 This is hacked and not tested at all. Please don't use it. ;)
 
+![Screenshot](https://i.imgur.com/TgJxR3g.png)
+
 - [xterm.js](https://xtermjs.org/)
 - [ktor (Kotlin)](https://ktor.io/)
 - WebSockets
