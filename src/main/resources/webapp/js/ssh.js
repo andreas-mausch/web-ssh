@@ -65,17 +65,27 @@ Vue.component('ssh-session', {
             }
         });
         this.term.open(this.$el.querySelector(".term"));
-        this.term.fit();
 
         const _this = this;
         this.session.onerror = function (message) {
             _this.term.write(message);
         };
         this.term.attach(this.session.socket);
+        this.fit();
+    },
+    updated: function () {
+        this.fit();
     },
     methods: {
         isCurrent: function () {
             return this.session === vm.currentSession;
+        },
+        fit: function () {
+            const _this = this;
+            _this.$nextTick(function () {
+                _this.term.fit();
+                this.term.focus();
+            });
         }
     }
 });
