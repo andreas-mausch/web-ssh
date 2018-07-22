@@ -5,6 +5,10 @@ import freemarker.cache.ClassTemplateLoader
 import io.ktor.application.Application
 import io.ktor.application.call
 import io.ktor.application.install
+import io.ktor.auth.Authentication
+import io.ktor.auth.UserIdPrincipal
+import io.ktor.auth.authenticate
+import io.ktor.auth.basic
 import io.ktor.content.resources
 import io.ktor.content.static
 import io.ktor.features.CallLogging
@@ -40,6 +44,18 @@ fun Application.main() {
         templateLoader = ClassTemplateLoader(Application::class.java.classLoader, "webapp/templates")
     }
     install(WebSockets)
+    install(Authentication) {
+        basic {
+            validate { credentials ->
+                if (credentials.name == "ssh"
+                        && credentials.password == "xBS-Vp9N-hey") {
+                    UserIdPrincipal(credentials.name)
+                } else {
+                    null
+                }
+            }
+        }
+    }
 
     routing {
         get("/") {
@@ -51,30 +67,32 @@ fun Application.main() {
             resources("webapp/js")
         }
 
-        webSocket("/ssh/{connectionString}") {
-            try {
-                val connectionString = SshConnectionString(call.parameters["connectionString"]!!)
-                logger.info("New client connected, connectionString: {}", connectionString)
-                // TODO: handle ClosedSendChannelException gracefully
-                Ssh(connectionString).use { ssh ->
-                    val launch = launch {
-                        ssh.readCommand(incoming)
-                    }
-                    while (launch.isActive) {
-                        ssh.processOutput(outgoing)
-                        flush()
-
-                        if (!ssh.isActive()) {
-                            break
+        authenticate {
+            webSocket("/ssh/{connectionString}") {
+                try {
+                    val connectionString = SshConnectionString(call.parameters["connectionString"]!!)
+                    logger.info("New client connected, connectionString: {}", connectionString)
+                    // TODO: handle ClosedSendChannelException gracefully
+                    Ssh(connectionString).use { ssh ->
+                        val launch = launch {
+                            ssh.readCommand(incoming)
                         }
+                        while (launch.isActive) {
+                            ssh.processOutput(outgoing)
+                            flush()
 
-                        delay(20)
+                            if (!ssh.isActive()) {
+                                break
+                            }
+
+                            delay(20)
+                        }
                     }
+                } catch (e: SSHException) {
+                    outgoing.send(Frame.Text("Exception occured: $e"))
+                } catch (e: KlaxonException) {
+                    outgoing.send(Frame.Text("Parameter parsing failed: $e"))
                 }
-            } catch (e: SSHException) {
-                outgoing.send(Frame.Text("Exception occured: $e"))
-            } catch (e: KlaxonException) {
-                outgoing.send(Frame.Text("Parameter parsing failed: $e"))
             }
         }
     }
