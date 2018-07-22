@@ -113,8 +113,23 @@ const vm = new Vue({
             this.currentSession = session;
             this.sessions.push(session)
         },
-        displayString: function (session) {
-            return session.connectionString.split("/").pop();
+        displayString: function (connectionString) {
+            return connectionString.split("/").pop();
+        },
+        getFavorite: function (url) {
+            const getKeyByValue = function (object, value) {
+                return Object.keys(object).find(key => object[key] === value);
+            };
+
+            return getKeyByValue(this.favorites, url);
+        },
+        toggleFavorite: function () {
+            const key = this.getFavorite(this.connectionString);
+            if (key) {
+                Vue.delete(this.favorites, key);
+            } else {
+                Vue.set(this.favorites, this.displayString(this.connectionString), this.connectionString);
+            }
         }
     }
 });

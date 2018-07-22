@@ -12,6 +12,10 @@
         <div class="connection-bar">
             <input class="connection-string" v-model="connectionString">
             <button class="wiggly-button" v-on:click.prevent="connect">Connect</button>
+            <button class="wiggly-button" v-on:click.prevent="toggleFavorite">
+                <i class="fa-star"
+                   v-bind:class="[getFavorite(connectionString) ? 'fas' : 'far']"></i>
+            </button>
         </div>
         <div class="favorites">
             <ul>
@@ -31,7 +35,7 @@
                     v-bind:class="{ active: currentSession == session }">
                     <a href="#"
                        v-on:click.prevent="currentSession = session">
-                        <span>{{ displayString(session) }}</span>
+                        <span>{{ displayString(session.connectionString) }}</span>
                     </a>
                     <i class="fas fa-2x fa-plug"
                        v-bind:style="{ color: session.connected() ? 'green' : 'gray' }">
