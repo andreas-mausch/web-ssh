@@ -19,6 +19,9 @@
                        v-on:click="currentSession = session">
                         <span>{{ session.connectionString }}</span>
                     </a>
+                    <i class="fas fa-2x fa-plug"
+                       v-bind:style="{ color: session.connected() ? 'green' : 'gray' }">
+                    </i>
                 </li>
             </ul>
         </div>

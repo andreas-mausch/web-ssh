@@ -50,9 +50,6 @@ Vue.component('ssh-session', {
     },
     template:
     '<div v-show="isCurrent()" class="row ssh-session">' +
-    '   <i class="fas fa-3x fa-plug"' +
-    '       v-bind:style="{ color: session.connected() ? \'green\' : \'gray\' }">' +
-    '   </i>' +
     '   <div class="term">' +
     '   </div>' +
     '</div>',
