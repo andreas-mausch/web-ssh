@@ -100,6 +100,9 @@ const vm = new Vue({
             session.connect();
             this.currentSession = session;
             this.sessions.push(session)
+        },
+        displayString: function (session) {
+            return session.connectionString.split("/").pop();
         }
     }
 });
