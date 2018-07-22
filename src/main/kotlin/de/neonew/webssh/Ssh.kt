@@ -10,10 +10,8 @@ import kotlinx.coroutines.experimental.channels.mapNotNull
 import net.schmizz.sshj.SSHClient
 import net.schmizz.sshj.connection.channel.Channel
 import net.schmizz.sshj.connection.channel.direct.Session
-import net.schmizz.sshj.transport.verification.ConsoleKnownHostsVerifier
-import net.schmizz.sshj.transport.verification.OpenSSHKnownHosts
+import net.schmizz.sshj.transport.verification.PromiscuousVerifier
 import java.io.Closeable
-import java.io.File
 import java.io.IOException
 import java.io.InputStream
 
@@ -25,9 +23,7 @@ class Ssh(connectionString: SshConnectionString) : Closeable {
     private val channel: Channel
 
     init {
-        val knownHosts = File(OpenSSHKnownHosts.detectSSHDir(), "known_hosts")
-
-        sshClient.addHostKeyVerifier(ConsoleKnownHostsVerifier(knownHosts, System.console()))
+        sshClient.addHostKeyVerifier(PromiscuousVerifier())
         sshClient.connect(connectionString.hostname, connectionString.port)
         connectionString.username.let { sshClient.authPublickey(it) }
 
