@@ -7,6 +7,7 @@ import kotlinx.coroutines.experimental.channels.SendChannel
 import kotlinx.coroutines.experimental.channels.consumeEach
 import kotlinx.coroutines.experimental.channels.mapNotNull
 import net.schmizz.sshj.SSHClient
+import net.schmizz.sshj.connection.channel.Channel
 import net.schmizz.sshj.connection.channel.direct.Session
 import net.schmizz.sshj.transport.verification.ConsoleKnownHostsVerifier
 import net.schmizz.sshj.transport.verification.OpenSSHKnownHosts
@@ -20,16 +21,19 @@ class Ssh(connectionString: SshConnectionString) : Closeable {
 
     private val sshClient: SSHClient = SSHClient()
     private val session: Session
-    private val shell: Session.Shell
+    private val channel: Channel
 
     init {
         val knownHosts = File(OpenSSHKnownHosts.detectSSHDir(), "known_hosts")
+
         sshClient.addHostKeyVerifier(ConsoleKnownHostsVerifier(knownHosts, System.console()))
         sshClient.connect(connectionString.hostname, connectionString.port)
         connectionString.username.let { sshClient.authPublickey(it) }
+
         session = sshClient.startSession()
         session.allocateDefaultPTY()
-        shell = session.startShell()
+
+        channel = connectionString.command?.let { session.exec(it) } ?: session.startShell()
     }
 
     override fun close() {
@@ -40,22 +44,22 @@ class Ssh(connectionString: SshConnectionString) : Closeable {
     suspend fun readCommand(incoming: ReceiveChannel<Frame>) {
         incoming.mapNotNull { it as? Frame.Text }.consumeEach { frame ->
             val text = frame.readText()
-            text.forEach { char -> shell.outputStream.write(char.toInt()) }
+            text.forEach { char -> channel.outputStream.write(char.toInt()) }
 
-            shell.outputStream.flush()
+            channel.outputStream.flush()
         }
     }
 
     suspend fun processOutput(outgoing: SendChannel<Frame>) {
         val data = ByteArray(1024)
-        val bytesRead = readInputStreamWithTimeout(shell.inputStream, data, 2000)
+        val bytesRead = readInputStreamWithTimeout(channel.inputStream, data, 2000)
         if (bytesRead > 0) {
             val text = String(data, 0, bytesRead)
             outgoing.send(Frame.Text(text))
         }
     }
 
-    fun isActive(): Boolean = shell.isOpen
+    fun isActive(): Boolean = channel.isOpen
 
     @Throws(IOException::class)
     fun readInputStreamWithTimeout(inputStream: InputStream, buffer: ByteArray, timeoutMillis: Int): Int {
@@ -84,6 +88,7 @@ class SshConnectionString(connectionString: String) {
     val hostname: String
     val username: String?
     val port: Int = 22
+    val command: String?
 
     private val regex = Regex("""^(([A-Za-z][A-Za-z0-9_]*)@)?([A-Za-z][A-Za-z0-9_.]*)$""")
 
@@ -91,6 +96,7 @@ class SshConnectionString(connectionString: String) {
         val matchResult = regex.find(connectionString)!!
         username = matchResult.groups[2]?.value
         hostname = matchResult.groups[3]!!.value
+        command = null
     }
 
     override fun toString(): String {
