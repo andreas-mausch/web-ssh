@@ -49,7 +49,7 @@ Vue.component('ssh-session', {
         }
     },
     template:
-    '<div class="row ssh-session">' +
+    '<div v-show="isCurrent()" class="row ssh-session">' +
     '   <i class="fas fa-3x fa-plug"' +
     '       v-bind:style="{ color: session.connected() ? \'green\' : \'gray\' }">' +
     '   </i>' +
@@ -72,10 +72,15 @@ Vue.component('ssh-session', {
             _this.term.write(message);
         };
         this.term.attach(this.session.socket);
+    },
+    methods: {
+        isCurrent: function () {
+            return this.session === vm.currentSession;
+        }
     }
 });
 
-new Vue({
+const vm = new Vue({
     el: '#app',
     data: {
         connectionString: 'ws://localhost:8080/ssh/nuc@nuc',
