@@ -10,13 +10,12 @@
     <div class="row">
         <input v-model="connectionString">
         <button v-on:click="connect">Connect</button>
-        <i class="fas fa-3x fa-plug"
-           v-bind:style="{ color: socket != null ? 'green' : 'gray' }">
-        </i>
     </div>
 
-    <div id="terminal" class="row">
-    </div>
+    <ssh-session
+            v-for="session in sessions"
+            v-bind:session="session">
+    </ssh-session>
 </div>
 
 <script src="https://unpkg.com/vue@2.5.16"></script>
