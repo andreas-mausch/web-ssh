@@ -91,6 +91,10 @@ const vm = new Vue({
     el: '#app',
     data: {
         connectionString: 'ws://localhost:8080/ssh/nuc@nuc',
+        favorites: {
+            'nuc': 'ws://localhost:8080/ssh/nuc@nuc',
+            'pi': 'ws://localhost:8080/ssh/saam@pi'
+        },
         sessions: [],
         currentSession: null
     },

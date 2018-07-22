@@ -1,0 +1,46 @@
+.favorite {
+  display: inline-block;
+}
+
+.favorite > a {
+  position: relative;
+  overflow: hidden;
+  border: 1px solid #2196f3;
+  border-radius: 4px;
+  color: #000;
+  background-color: #fff;
+  display: inline-block;
+  padding: 8px 16px;
+  vertical-align: middle;
+  cursor: pointer;
+  text-decoration: none;
+  text-align: center;
+  width: 100px;
+  transition: all 0.1s ease-out 0.5s;
+}
+
+.favorite > a:hover {
+  box-shadow: 0 8px 16px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
+  text-align: left;
+  width: 500px;
+  transition: all 0.15s ease-in;
+}
+
+.favorite > a:hover > span {
+  font-weight: bold;
+}
+
+.favorite > a:before {
+  content: attr(data-url);
+  position: absolute;
+  right: 20px;
+  width: 100%;
+  text-align: right;
+  transition: all 0.1s ease-in-out;
+  transform: translate(150%, 0);
+}
+
+.favorite > a:hover:before {
+  transition: all 0.15s ease-in-out 0.15s;
+  transform: translate(0, 0);
+}

@@ -11,7 +11,18 @@
     <div>
         <div class="connection-bar">
             <input class="connection-string" v-model="connectionString">
-            <button class="wiggly-button" v-on:click="connect">Connect</button>
+            <button class="wiggly-button" v-on:click.prevent="connect">Connect</button>
+        </div>
+        <div class="favorites">
+            <ul>
+                <li v-for="(url, name) in favorites" class="favorite">
+                    <a href="#"
+                       :data-url="url"
+                       v-on:click.prevent="connectToFavorite(name)">
+                        <span>{{ name }}</span>
+                    </a>
+                </li>
+            </ul>
         </div>
 
         <div class="tabs">
@@ -19,7 +30,7 @@
                 <li v-for="session in sessions"
                     v-bind:class="{ active: currentSession == session }">
                     <a href="#"
-                       v-on:click="currentSession = session">
+                       v-on:click.prevent="currentSession = session">
                         <span>{{ displayString(session) }}</span>
                     </a>
                     <i class="fas fa-2x fa-plug"
