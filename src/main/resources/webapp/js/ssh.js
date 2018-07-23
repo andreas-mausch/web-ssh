@@ -110,10 +110,11 @@ const vm = new Vue({
             this.sessions.push(session)
         },
         connectToFavorite: function (favorite) {
-            let session = new Session(this.favorites[favorite]);
+            const session = new Session(this.favorites[favorite]);
             session.connect();
             this.currentSession = session;
-            this.sessions.push(session)
+            this.sessions.push(session);
+            this.connectionString = this.favorites[favorite];
         },
         displayString: function (connectionString) {
             return connectionString.split("/").pop();
