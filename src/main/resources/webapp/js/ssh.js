@@ -91,14 +91,16 @@ const vm = new Vue({
     el: '#app',
     data: {
         connectionString: 'ws://localhost:8080/ssh/nuc@nuc',
-        favorites: {
-            'nuc': 'ws://localhost:8080/ssh/nuc@nuc',
-            'nuc-ls': 'ws://localhost:8080/ssh/nuc@nuc{"command":"ls -lh"}',
-            'nuc-tail': 'ws://localhost:8080/ssh/nuc@nuc{"command":"tail -f nginx%2fnginx.conf"}',
-            'pi': 'ws://localhost:8080/ssh/saam@pi'
-        },
+        favorites: null,
         sessions: [],
         currentSession: null
+    },
+    created: function () {
+        this.favorites = JSON.parse(localStorage.getItem('favorites'));
+
+        if (!this.favorites) {
+            this.favorites = {};
+        }
     },
     methods: {
         connect: function () {
@@ -130,6 +132,7 @@ const vm = new Vue({
             } else {
                 Vue.set(this.favorites, this.displayString(this.connectionString), this.connectionString);
             }
+            localStorage.setItem('favorites', JSON.stringify(this.favorites));
         }
     }
 });
