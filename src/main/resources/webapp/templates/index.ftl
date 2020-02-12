@@ -2,7 +2,7 @@
 <head>
     <link rel="stylesheet" href="static/main.css"/>
     <link rel="stylesheet" href="webjars/xterm/dist/xterm.css"/>
-    <link rel="stylesheet" href="https://unpkg.com/@fortawesome/fontawesome-free@5.1.1/css/all.css"/>
+    <link rel="stylesheet" href="webjars/font-awesome/css/all.min.css"/>
     <link href='https://fonts.googleapis.com/css?family=Montserrat:700' rel='stylesheet' type='text/css'>
     <title>Web-SSH</title>
 </head>

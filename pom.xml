@@ -98,6 +98,11 @@
             <artifactId>xterm</artifactId>
             <version>3.8.0</version>
         </dependency>
+        <dependency>
+            <groupId>org.webjars</groupId>
+            <artifactId>font-awesome</artifactId>
+            <version>5.12.0</version>
+        </dependency>
     </dependencies>
 
     <build>
