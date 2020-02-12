@@ -3,7 +3,7 @@
     <link rel="stylesheet" href="static/main.css"/>
     <link rel="stylesheet" href="webjars/xterm/dist/xterm.css"/>
     <link rel="stylesheet" href="webjars/font-awesome/css/all.min.css"/>
-    <link href='https://fonts.googleapis.com/css?family=Montserrat:700' rel='stylesheet' type='text/css'>
+    <link rel="stylesheet" href="webjars/montserrat-webfont/css/montserrat-webfont.css">
     <title>Web-SSH</title>
 </head>
 
