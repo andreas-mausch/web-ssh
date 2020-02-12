@@ -3,10 +3,10 @@ package de.neonew.webssh
 import com.beust.klaxon.Klaxon
 import io.ktor.http.cio.websocket.Frame
 import io.ktor.http.cio.websocket.readText
-import kotlinx.coroutines.experimental.channels.ReceiveChannel
-import kotlinx.coroutines.experimental.channels.SendChannel
-import kotlinx.coroutines.experimental.channels.consumeEach
-import kotlinx.coroutines.experimental.channels.mapNotNull
+import kotlinx.coroutines.channels.ReceiveChannel
+import kotlinx.coroutines.channels.SendChannel
+import kotlinx.coroutines.channels.consumeEach
+import kotlinx.coroutines.channels.mapNotNull
 import net.schmizz.sshj.SSHClient
 import net.schmizz.sshj.connection.channel.Channel
 import net.schmizz.sshj.connection.channel.direct.Session
@@ -14,7 +14,7 @@ import net.schmizz.sshj.transport.verification.PromiscuousVerifier
 import java.io.Closeable
 import java.io.IOException
 import java.io.InputStream
-
+import kotlin.math.min
 
 class Ssh(connectionString: SshConnectionString) : Closeable {
 
@@ -65,7 +65,7 @@ class Ssh(connectionString: SshConnectionString) : Closeable {
         var offset = 0
         val maxTimeMillis = System.currentTimeMillis() + timeoutMillis
         while (System.currentTimeMillis() < maxTimeMillis && offset < buffer.size) {
-            val readLength = java.lang.Math.min(inputStream.available(), buffer.size - offset)
+            val readLength = min(inputStream.available(), buffer.size - offset)
 
             if (readLength == 0) {
                 break

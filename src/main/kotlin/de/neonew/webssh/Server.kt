@@ -9,28 +9,29 @@ import io.ktor.auth.Authentication
 import io.ktor.auth.UserHashedTableAuth
 import io.ktor.auth.authenticate
 import io.ktor.auth.basic
-import io.ktor.content.resources
-import io.ktor.content.static
 import io.ktor.features.CallLogging
 import io.ktor.freemarker.FreeMarker
 import io.ktor.freemarker.FreeMarkerContent
 import io.ktor.http.cio.websocket.Frame
+import io.ktor.http.content.resources
+import io.ktor.http.content.static
 import io.ktor.locations.Locations
 import io.ktor.response.respond
 import io.ktor.routing.get
 import io.ktor.routing.routing
 import io.ktor.server.engine.embeddedServer
 import io.ktor.server.netty.Netty
-import io.ktor.util.decodeBase64
+import io.ktor.util.getDigestFunction
 import io.ktor.websocket.WebSockets
 import io.ktor.websocket.webSocket
-import kotlinx.coroutines.experimental.delay
-import kotlinx.coroutines.experimental.launch
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
 import net.schmizz.sshj.common.SSHException
 import org.slf4j.LoggerFactory.getLogger
 import org.slf4j.event.Level.INFO
+import java.util.*
 
-fun main(args: Array<String>) {
+fun main() {
     embeddedServer(Netty, port = 8080, module = Application::main).start(wait = true)
 }
 
@@ -46,11 +47,12 @@ fun Application.main() {
     }
     install(WebSockets)
 
-    val users = UserHashedTableAuth(table = mapOf(
-            "ssh" to decodeBase64("0relocFXy/kW5nBaQi3Thtf9OTTE8JWmzSvM7Swl8H0=")
-    ))
+    val users = UserHashedTableAuth(
+            getDigestFunction("SHA-256") { "ktor" },
+            mapOf("ssh" to Base64.getDecoder().decode("0relocFXy/kW5nBaQi3Thtf9OTTE8JWmzSvM7Swl8H0="))
+    )
     install(Authentication) {
-        basic { validate({ users.authenticate(it) }) }
+        basic { validate { users.authenticate(it) } }
     }
 
     routing {
@@ -85,7 +87,7 @@ fun Application.main() {
                         }
                     }
                 } catch (e: SSHException) {
-                    outgoing.send(Frame.Text("Exception occured: $e"))
+                    outgoing.send(Frame.Text("Exception occurred: $e"))
                 } catch (e: KlaxonException) {
                     outgoing.send(Frame.Text("Parameter parsing failed: $e"))
                 }
