@@ -53,7 +53,7 @@
 
 <script src="webjars/vue/vue.min.js"></script>
 <script src="webjars/xterm/dist/xterm.js"></script>
-<script src="https://unpkg.com/xterm@3.5.1/dist/addons/fit/fit.js"></script>
-<script src="https://unpkg.com/xterm@3.5.1/dist/addons/attach/attach.js"></script>
+<script src="webjars/xterm/dist/addons/fit/fit.js"></script>
+<script src="webjars/xterm/dist/addons/attach/attach.js"></script>
 <script src="static/ssh.js"></script>
 </html>
