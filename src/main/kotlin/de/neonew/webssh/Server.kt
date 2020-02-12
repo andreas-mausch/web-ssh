@@ -22,6 +22,7 @@ import io.ktor.routing.routing
 import io.ktor.server.engine.embeddedServer
 import io.ktor.server.netty.Netty
 import io.ktor.util.getDigestFunction
+import io.ktor.webjars.Webjars
 import io.ktor.websocket.WebSockets
 import io.ktor.websocket.webSocket
 import kotlinx.coroutines.delay
@@ -46,6 +47,7 @@ fun Application.main() {
         templateLoader = ClassTemplateLoader(Application::class.java.classLoader, "webapp/templates")
     }
     install(WebSockets)
+    install(Webjars)
 
     val users = UserHashedTableAuth(
             getDigestFunction("SHA-256") { "ktor" },
