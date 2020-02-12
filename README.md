@@ -13,7 +13,7 @@ The base64 password hash (0relocFXy/kW5nBaQi3Thtf9OTTE8JWmzSvM7Swl8H0=) you can 
 ws://ssh:RHF-e425-XpP@localhost:8080/ssh/nuc@nuc
 ws://ssh:RHF-e425-XpP@localhost:8080/ssh/nuc@nuc{"command":"ls -l"}
 
-ws://ssh:RHF-e425-XpP@localhost:8080/ssh/nuc@nuc{"password":"abc"} 
+ws://ssh:RHF-e425-XpP@localhost:8080/ssh/nuc@nuc{"password":"abc"}
 ```
 
 - [xterm.js](https://xtermjs.org/)
